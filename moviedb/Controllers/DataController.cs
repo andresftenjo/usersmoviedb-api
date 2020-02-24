@@ -26,7 +26,9 @@ namespace moviedb.Controllers
         public IHttpActionResult GetForAuthenticate()
         {
             var identity = (ClaimsIdentity)User.Identity;
-            return Ok("Hello " + identity.Name);
+            string userId = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+            return Ok(userId);
         }
 
         [Authorize(Roles = "admin")]

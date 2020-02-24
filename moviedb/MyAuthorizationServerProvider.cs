@@ -23,6 +23,7 @@ namespace moviedb
                 identity.AddClaim(new Claim(ClaimTypes.Role, "admin"));
                 identity.AddClaim(new Claim("username", "admin"));
                 identity.AddClaim(new Claim(ClaimTypes.Name, "Andres Tenjo"));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "123"));
                 context.Validated(identity);
             }
             else if (context.UserName == "user" && context.Password == "user")
@@ -30,6 +31,7 @@ namespace moviedb
                 identity.AddClaim(new Claim(ClaimTypes.Role, "user"));
                 identity.AddClaim(new Claim("username", "user"));
                 identity.AddClaim(new Claim(ClaimTypes.Name, "Andres Tenjo"));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "124"));
                 context.Validated(identity);
             }
             else
