@@ -17,6 +17,7 @@ namespace moviedb.Models
 
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Rank> Rank { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,7 +31,7 @@ namespace moviedb.Models
         {
             modelBuilder.Entity<Comment>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.Id).HasName("PK_Comment");//give the primary Key and name to table     
 
                 entity.Property(e => e.Comment1)
                     .IsRequired()
@@ -42,12 +43,17 @@ namespace moviedb.Models
                 entity.Property(e => e.DateUpdated).HasColumnType("datetime");
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.IdUserNavigation)
+                    .WithMany(p => p.Comment)
+                    .HasForeignKey(d => d.IdUser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Comment_Users");
             });
 
             modelBuilder.Entity<Rank>(entity =>
             {
-                //entity.HasNoKey();
-                entity.HasKey(e => e.Id).HasName("PK_Rank");//give the primary Key and name to table               
+                entity.HasKey(e => e.Id).HasName("PK_Rank");//give the primary Key and name to table     
 
                 entity.Property(e => e.DateCreated).HasColumnType("datetime");
 
@@ -56,6 +62,16 @@ namespace moviedb.Models
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Rank1).HasColumnName("Rank");
+            });
+
+            modelBuilder.Entity<Users>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

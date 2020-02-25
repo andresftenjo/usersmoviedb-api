@@ -1,4 +1,5 @@
-﻿using moviedb.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using moviedb.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,18 +20,29 @@ namespace moviedb.Controllers
         [Authorize]
         [HttpGet]
         [Route("api/comments")]
-        public List<Comment> Get(int idMovie)
+        public List<CommentViewModel> Get(int idMovie)
         {
             using (var context = new moviedbusersContext())
             {
-                return context.Comment.Where(r => r.IdMovie.Equals(idMovie)).ToList();
+                var movieComments =
+                   from c in context.Comment
+                   join u in context.Users on c.IdUser equals u.Id
+                   where c.IdMovie == idMovie
+                   select new CommentViewModel {
+                       Id = c.Id,
+                       Comment = c.Comment1,
+                       IdMovie = c.IdMovie,
+                       IdUser = c.IdUser,
+                       UserName = u.UserName
+                   };
+                return movieComments.ToList();
             }
         }
 
         [Authorize]
         [HttpPost]
         [Route("api/comment")]
-        public IHttpActionResult Post([FromBody]Comment commentObj)
+        public IHttpActionResult Post([FromBody]CommentViewModel commentObj)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +54,7 @@ namespace moviedb.Controllers
                 {
                     IdUser = commentObj.IdUser,
                     IdMovie = commentObj.IdMovie,
-                    Comment1 = commentObj.Comment1,
+                    Comment1 = commentObj.Comment,
                     DateCreated = DateTime.Now,
                     DateUpdated = DateTime.Now
                 });
@@ -54,7 +66,7 @@ namespace moviedb.Controllers
         [Authorize]
         [HttpPut]
         [Route("api/comment")]
-        public IHttpActionResult PutRank(int id, [FromBody]Comment commentObj)
+        public IHttpActionResult PutRank(int id, [FromBody]CommentViewModel commentObj)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +78,7 @@ namespace moviedb.Controllers
 
                 if (userComment != null)
                 {
-                    userComment.Comment1 = commentObj.Comment1;
+                    userComment.Comment1 = commentObj.Comment;
                     userComment.DateUpdated = DateTime.Now;
 
                     context.SaveChanges();

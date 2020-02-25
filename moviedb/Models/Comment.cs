@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace moviedb.Models
@@ -11,5 +12,9 @@ namespace moviedb.Models
         public string Comment1 { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
+
+        [JsonIgnore]
+        public virtual Users IdUserNavigation { get; set; }
+
     }
 }
