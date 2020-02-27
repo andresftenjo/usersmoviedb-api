@@ -28,6 +28,10 @@ namespace moviedb.Controllers
         {
             var identity = (ClaimsIdentity)User.Identity;
             string userId = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            int userIdInt = 0;
+            if (!string.IsNullOrEmpty(userId)) {
+                userIdInt = int.Parse(userId);
+            }
             bool isNew = false;
 
             using (var context = new moviedbusersContext())
@@ -35,7 +39,7 @@ namespace moviedb.Controllers
                 if (!context.Users.Any(o => o.Id == int.Parse(userId))) {
                     context.Users.Add(new Users()
                     {
-                        Id = int.Parse(userId),
+                        Id = userIdInt,
                         UserName = identity.Name
                     });
                     context.SaveChanges();
@@ -43,7 +47,7 @@ namespace moviedb.Controllers
                 }
             }
 
-            return Ok(new { UserId = userId, UserName = identity.Name , NewUser = isNew});
+            return Ok(new { UserId = userIdInt, UserName = identity.Name , NewUser = isNew});
         }
 
         [Authorize(Roles = "admin")]

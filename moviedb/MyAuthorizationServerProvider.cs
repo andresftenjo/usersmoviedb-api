@@ -22,7 +22,7 @@ namespace moviedb
             {
                 identity.AddClaim(new Claim(ClaimTypes.Role, "admin"));
                 identity.AddClaim(new Claim("username", "admin"));
-                identity.AddClaim(new Claim(ClaimTypes.Name, "Andres Tenjo"));
+                identity.AddClaim(new Claim(ClaimTypes.Name, "Chuck Norris"));
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "123"));
                 context.Validated(identity);
             }
